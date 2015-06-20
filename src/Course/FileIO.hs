@@ -63,7 +63,11 @@ the contents of c
 main ::
   IO ()
 main =
-  error "todo: Course.FileIO#main"
+  getArgs >>= head >>= run
+  where
+    head :: List a -> IO a
+    head Nil = error "You should enter filepath"
+    head (x :. _) = pure x
 
 type FilePath =
   Chars
@@ -72,31 +76,31 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run path =
+  (lines <$> readFile path) >>= getFiles >>= printFiles
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
 getFiles =
-  error "todo: Course.FileIO#getFiles"
+  sequence . map getFile
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile path =
+  (,) path <$> readFile path
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
 printFiles =
-  error "todo: Course.FileIO#printFiles"
+  void . sequence . map printFile'
+  where printFile' (path, content) = printFile path content
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
-
+printFile path content =
+  putStrLn $ "============" ++ path ++ "\n" ++ content
